@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Management;
 using Npgsql;
 
 namespace EventViewerAndWriter
@@ -9,11 +10,9 @@ namespace EventViewerAndWriter
         static void Main(string[] args)
         {
             Collector.ReadEvents();
-            //Collector.InsertItem();
-            //PostgreSQL postgre = PostgreSQL.getInstance();
-            //postgre.InsertItem(new LogItem());
             
         }
+
     }
 
     class Collector
@@ -28,9 +27,12 @@ namespace EventViewerAndWriter
 
             foreach(EventLogEntry log in eventLog.Entries)
             {
-                LogItem logItem = new LogItem(log.InstanceId, 2, log.Source, log.Message, log.UserName, log.MachineName, 1, log.TimeGenerated);
-                postgreSQL.InsertItem(logItem);
-                //Console.WriteLine("{0}\n", log.Message);
+                if (log.InstanceId == 27 || log.InstanceId == 129)
+                {
+                    LogItem logItem = new LogItem(log.InstanceId, 2, log.Source, log.Message, log.UserName, log.MachineName, 1, log.TimeGenerated);
+                    postgreSQL.InsertItem(logItem);
+                    Console.WriteLine("{0}\n", log.Message);
+                }
             }
         }
     }
@@ -66,12 +68,7 @@ namespace EventViewerAndWriter
             this.Log_level = log_level;
             this.Date = date;
         }
-        public LogItem() { }
-
-        private void InsertItem()
-        {
-
-        }
+       
     }
 
     class PostgreSQL
